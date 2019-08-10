@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>My First threeJS project</title>
+    <link rel="stylesheet" href="css/style.css" />
+  </head>
+  <body>
+    <div id="myThreeJSproject"></div>
+
+    <script src="three.min.js"></script>
+    <script src="OrbitControls.js"></script>
+    <script>
+      var scene = new THREE.Scene();
+
+      var camera = new THREE.PerspectiveCamera(
+        35,
+        window.innerWidth / window.innerHeight,
+        0.1,
+        1000
+      );
+      camera.position.set(0, 5, 20);
+      camera.lookAt(0, 0, 0);
+
+      var renderer = new THREE.WebGLRenderer();
+      renderer.setSize(window.innerWidth, window.innerHeight);
+      document
+        .getElementById("myThreeJSproject")
+        .appendChild(renderer.domElement);
+
+      var controls = new THREE.OrbitControls(camera, renderer.domElement);
+      var earthGroup = new THREE.Group();
+
+      //My Earth
+      var sphereGeometry = new THREE.SphereGeometry(2, 50, 50);
+      var sphereMaterial = new THREE.MeshBasicMaterial({
+        wireframe: false,
+        // map: new THREE.TextureLoader().load(
+        //   "http://1.bp.blogspot.com/-tQrx74rHVqE/TuXp0eiZrWI/AAAAAAAAAsU/aq3SlioIFwo/s1600/ds3+bw.jpg"
+        // )
+        map: new THREE.TextureLoader().load(
+          "https://upload.wikimedia.org/wikipedia/commons/c/c4/Earthmap1000x500compac.jpg"
+        )
+      });
+      var Sphere = new THREE.Mesh(sphereGeometry, sphereMaterial);
+      //scene.add(Sphere);
+      earthGroup.add(Sphere);
+      Sphere.position.set(0, 3, 0);
+
+      //My Clouds
+      var cloudSphereGeometry = new THREE.SphereGeometry(2.1, 50, 50);
+      var cloudSphereMaterial = new THREE.MeshBasicMaterial({
+        wireframe: false,
+        map: new THREE.TextureLoader().load(
+          "https://upload.wikimedia.org/wikipedia/commons/a/ad/Fair_Weather_Cloud_Map.jpg"
+        ),
+        transparent: true,
+        opacity: 0.6
+      });
+      var cloudSphere = new THREE.Mesh(
+        cloudSphereGeometry,
+        cloudSphereMaterial
+      );
+      //scene.add(cloudSphere);
+      earthGroup.add(cloudSphere);
+      cloudSphere.position.set(0, 3, 0);
+
+      //My Stars
+      var starSphereGeometry = new THREE.SphereGeometry(800, 18, 18);
+      var starSphereMaterial = new THREE.MeshBasicMaterial({
+        wireframe: false,
+        opacity: 0.4,
+        transparent: true,
+        map: new THREE.TextureLoader().load(
+          "https://upload.wikimedia.org/wikipedia/commons/0/09/Night_stars_berlin.png"
+        ),
+        side: THREE.BackSide
+      });
+      var starSphere = new THREE.Mesh(starSphereGeometry, starSphereMaterial);
+      scene.add(starSphere);
+      starSphere.position.set(0, 0, 0);
+
+      //My Moon
+      var moonSphereGeometry = new THREE.SphereGeometry(1, 18, 18);
+      var moonSphereMaterial = new THREE.MeshBasicMaterial({
+        wireframe: false,
+        transparent: false,
+        opacity: 1,
+        map: new THREE.TextureLoader().load(
+          "https://upload.wikimedia.org/wikipedia/commons/2/23/Censorinus_lunar_crater_map.jpg"
+        )
+      });
+      var moonSphere = new THREE.Mesh(moonSphereGeometry, moonSphereMaterial);
+      moonSphere.position.set(-5, 0, -5);
+      earthGroup.add(moonSphere);
+
+      scene.add(earthGroup);
+      earthGroup.position.set(0, 0, -10);
+      animate();
+
+      function animate() {
+        Sphere.rotation.y = Sphere.rotation.y + Math.PI / 440;
+        cloudSphere.rotation.y = cloudSphere.rotation.y + Math.PI / 1000;
+        moonSphere.position.set(
+          Math.cos(Date.now() * 0.001) * 10,
+          0,
+          Math.sin(Date.now() * 0.001) * 10
+        );
+        moonSphere.rotation.y = moonSphere.rotation.y - Math.PI / 440;
+        renderer.render(scene, camera);
+        requestAnimationFrame(animate);
+      }
+
+      window.onresize = function() {
+        camera.aspect = window.innerWidth / window.innerHeight;
+        camera.updateProjectionMatrix();
+        renderer.setSize(window.innerWidth, window.innerHeight);
+      };
+    </script>
+  </body>
+</html>
